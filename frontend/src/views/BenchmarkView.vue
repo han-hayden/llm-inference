@@ -1,6 +1,6 @@
 <template>
   <div class="benchmark-page">
-    <h1 class="page-title">基准测试</h1>
+    <h1 class="page-title">性能压测</h1>
 
     <n-grid :x-gap="24" :cols="2" class="top-section">
       <n-gi>
@@ -290,45 +290,25 @@ onMounted(async () => {
 onUnmounted(stopPolling)
 </script>
 
+
 <style scoped>
 .benchmark-page {
   max-width: 1400px;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 24px 0;
 }
 
 .top-section {
   margin-bottom: 24px;
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-radius: 12px !important;
-}
-
-.accent-btn {
-  background: linear-gradient(135deg, #00f0ff, #7c3aed) !important;
-  border: none !important;
-  font-weight: 600;
-}
-
 .empty-text {
-  color: rgba(255, 255, 255, 0.3);
+  color: #bfbfbf;
   text-align: center;
   padding: 32px 0;
 }
 
 .progress-item {
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .progress-item:last-child {
@@ -342,13 +322,13 @@ onUnmounted(stopPolling)
 }
 
 .progress-name {
-  color: #ffffff;
+  color: #1f1f1f;
   font-weight: 500;
   font-size: 14px;
 }
 
 .progress-detail {
-  color: rgba(255, 255, 255, 0.45);
+  color: #8c8c8c;
   font-size: 12px;
   margin-top: 4px;
 }

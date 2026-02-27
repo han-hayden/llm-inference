@@ -9,7 +9,7 @@
       </n-button>
       <h2 style="margin: 0; font-size: 1.4rem">
         记录详情
-        <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 8px">{{ taskId }}</span>
+        <span style="color: #8c8c8c; font-size: 0.85rem; margin-left: 8px">{{ taskId }}</span>
       </h2>
     </div>
 
@@ -39,19 +39,19 @@
           <n-grid :cols="3" :x-gap="16" :y-gap="16" responsive="screen" item-responsive>
             <n-grid-item span="3 m:1">
               <div class="glass-card">
-                <h4 style="margin-bottom: 12px; color: var(--text-secondary)">上下文长度分布</h4>
+                <h4 style="margin-bottom: 12px; color: #8c8c8c">上下文长度分布</h4>
                 <div ref="contextChartRef" style="width: 100%; height: 300px"></div>
               </div>
             </n-grid-item>
             <n-grid-item span="3 m:1">
               <div class="glass-card">
-                <h4 style="margin-bottom: 12px; color: var(--text-secondary)">响应延迟分布</h4>
+                <h4 style="margin-bottom: 12px; color: #8c8c8c">响应延迟分布</h4>
                 <div ref="latencyChartRef" style="width: 100%; height: 300px"></div>
               </div>
             </n-grid-item>
             <n-grid-item span="3 m:1">
               <div class="glass-card">
-                <h4 style="margin-bottom: 12px; color: var(--text-secondary)">缓存命中率分布</h4>
+                <h4 style="margin-bottom: 12px; color: #8c8c8c">缓存命中率分布</h4>
                 <div ref="cacheChartRef" style="width: 100%; height: 300px"></div>
               </div>
             </n-grid-item>
@@ -94,14 +94,14 @@
         <n-spin :show="suggestionsLoading">
           <div v-if="suggestions && suggestions.length > 0" style="display: flex; flex-direction: column; gap: 16px">
             <div class="glass-card" v-for="(item, idx) in suggestions" :key="idx">
-              <h4 style="color: var(--accent-cyan); margin-bottom: 8px">{{ item.title || `Suggestion ${idx + 1}` }}</h4>
-              <p style="color: var(--text-secondary); line-height: 1.6">{{ item.content || item }}</p>
+              <h4 style="color: #1677ff; margin-bottom: 8px">{{ item.title || `Suggestion ${idx + 1}` }}</h4>
+              <p style="color: #8c8c8c; line-height: 1.6">{{ item.content || item }}</p>
             </div>
           </div>
           <div v-else class="glass-card" style="text-align: center; padding: 80px 20px">
-            <n-icon :component="HardwareChipOutline" :size="64" style="color: var(--text-secondary); margin-bottom: 16px" />
-            <h3 style="color: var(--text-secondary); margin-bottom: 8px">分析引擎即将上线</h3>
-            <p style="color: var(--text-secondary); font-size: 0.85rem">
+            <n-icon :component="HardwareChipOutline" :size="64" style="color: #8c8c8c; margin-bottom: 16px" />
+            <h3 style="color: #8c8c8c; margin-bottom: 8px">分析引擎即将上线</h3>
+            <p style="color: #8c8c8c; font-size: 0.85rem">
               分析引擎就绪后，将在此处生成智能优化建议。
             </p>
           </div>
@@ -215,9 +215,9 @@ function buildBarOption(categories: string[], values: number[], xLabel: string):
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: '#1a1e2e',
-      borderColor: 'rgba(255,255,255,0.1)',
-      textStyle: { color: '#e2e8f0' },
+      backgroundColor: '#ffffff',
+      borderColor: '#e8e8e8',
+      textStyle: { color: '#1f1f1f' },
     },
     grid: {
       left: '8%',
@@ -229,15 +229,15 @@ function buildBarOption(categories: string[], values: number[], xLabel: string):
     xAxis: {
       type: 'category',
       data: categories,
-      axisLabel: { color: '#94a3b8', fontSize: 11 },
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+      axisLabel: { color: '#8c8c8c', fontSize: 11 },
+      axisLine: { lineStyle: { color: '#d9d9d9' } },
       name: xLabel,
-      nameTextStyle: { color: '#94a3b8' },
+      nameTextStyle: { color: '#8c8c8c' },
     },
     yAxis: {
       type: 'value',
-      axisLabel: { color: '#94a3b8', fontSize: 11 },
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } },
+      axisLabel: { color: '#8c8c8c', fontSize: 11 },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
     },
     series: [
       {
@@ -247,8 +247,8 @@ function buildBarOption(categories: string[], values: number[], xLabel: string):
         itemStyle: {
           borderRadius: [4, 4, 0, 0],
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#00f0ff' },
-            { offset: 1, color: '#7c3aed' },
+            { offset: 0, color: '#1677ff' },
+            { offset: 1, color: '#69b1ff' },
           ]),
         },
       },
@@ -461,9 +461,9 @@ onBeforeUnmount(() => {
 
 .percentile-tag {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: #8c8c8c;
   font-family: 'JetBrains Mono', monospace;
-  background: rgba(255, 255, 255, 0.04);
+  background: #f5f5f5;
   padding: 2px 8px;
   border-radius: 4px;
 }

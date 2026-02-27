@@ -1,16 +1,15 @@
 :root {
-  --bg-primary: #0a0e1a;
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --border-glass: rgba(255, 255, 255, 0.1);
-  --accent-cyan: #00f0ff;
-  --accent-purple: #7c3aed;
-  --accent-green: #22c55e;
-  --accent-red: #ef4444;
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.3);
-  --glow-purple: 0 0 20px rgba(124, 58, 237, 0.3);
+  --bg-primary: #f0f2f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafafa;
+  --border-color: #e8e8e8;
+  --accent-blue: #1677ff;
+  --accent-green: #52c41a;
+  --accent-red: #ff4d4f;
+  --accent-orange: #fa8c16;
+  --text-primary: #1f1f1f;
+  --text-secondary: #8c8c8c;
+  --text-tertiary: #bfbfbf;
 }
 
 * {
@@ -22,7 +21,7 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -30,56 +29,56 @@ code, .mono {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-/* Frosted Glass Card */
+/* Clean Card */
 .glass-card {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   padding: 20px;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(0, 240, 255, 0.2);
-  box-shadow: var(--glow-cyan);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* Glow text */
-.glow-text {
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 30px rgba(0, 240, 255, 0.2);
+/* Page title with left blue bar */
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent-blue);
+  line-height: 1.4;
 }
 
-.glow-text-green {
-  color: var(--accent-green);
-  text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+/* Primary button */
+.accent-btn {
+  background: var(--accent-blue) !important;
+  border: none !important;
+  font-weight: 500;
+  border-radius: 6px;
 }
 
-.glow-text-red {
-  color: var(--accent-red);
-  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+.accent-btn:hover {
+  background: #4096ff !important;
 }
 
 /* Metric card */
 .metric-card {
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(124, 58, 237, 0.05));
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  border-radius: 12px;
-  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
   text-align: center;
 }
 
 .metric-value {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
-  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
 }
 
 .metric-label {
@@ -97,9 +96,9 @@ code, .mono {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.25);
 }

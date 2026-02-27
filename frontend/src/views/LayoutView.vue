@@ -2,14 +2,23 @@
   <n-layout has-sider class="layout-root">
     <n-layout-sider
       bordered
-      :width="240"
+      :width="220"
       :collapsed-width="0"
       collapse-mode="width"
       class="layout-sider"
       content-class="sider-content"
     >
       <div class="sider-header">
-        <h2 class="app-title">AICP 性能测试工具</h2>
+        <div class="app-logo">
+          <svg viewBox="0 0 28 28" width="28" height="28" fill="none">
+            <rect width="28" height="28" rx="6" fill="#1677ff"/>
+            <path d="M8 14l4 4 8-8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="app-info">
+          <div class="app-title">AICP 性能测试</div>
+          <div class="app-subtitle">LLM Inference Platform</div>
+        </div>
       </div>
       <n-menu
         :value="activeKey"
@@ -19,8 +28,12 @@
         @update:value="handleMenuSelect"
       />
       <div class="sider-footer">
-        <n-button quaternary block class="logout-btn" @click="handleLogout">
-          退出登录
+        <div class="user-info">
+          <n-avatar :size="28" round style="background: #1677ff; font-size: 12px;">A</n-avatar>
+          <span class="user-name">Administrator</span>
+        </div>
+        <n-button text size="small" class="logout-btn" @click="handleLogout">
+          退出
         </n-button>
       </div>
     </n-layout-sider>
@@ -31,12 +44,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h } from 'vue'
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { MenuOption } from 'naive-ui'
-import {
-  NIcon
-} from 'naive-ui'
 
 const router = useRouter()
 const route = useRoute()
@@ -72,12 +82,12 @@ function handleLogout() {
 <style scoped>
 .layout-root {
   height: 100vh;
-  background: #0a0e1a;
+  background: #f0f2f5;
 }
 
 .layout-sider {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: #ffffff !important;
+  border-right: 1px solid #f0f0f0 !important;
 }
 
 :deep(.sider-content) {
@@ -87,41 +97,108 @@ function handleLogout() {
 }
 
 .sider-header {
-  padding: 24px 20px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.app-logo {
+  flex-shrink: 0;
+}
+
+.app-info {
+  min-width: 0;
 }
 
 .app-title {
-  font-size: 17px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #00f0ff, #7c3aed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f1f1f;
+  white-space: nowrap;
+}
+
+.app-subtitle {
+  font-size: 11px;
+  color: #8c8c8c;
   white-space: nowrap;
 }
 
 .sider-menu {
   flex: 1;
-  padding-top: 8px;
+  padding-top: 4px;
+}
+
+/* Active menu item: blue background + white text + left blue bar */
+:deep(.n-menu-item-content--selected) {
+  background: #1677ff !important;
+  color: #ffffff !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+:deep(.n-menu-item-content--selected::before) {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #1677ff;
+  border-radius: 0;
+}
+
+:deep(.n-menu .n-menu-item) {
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+:deep(.n-menu .n-menu-item-content) {
+  border-radius: 0 !important;
+  padding-left: 20px !important;
+  height: 44px;
+}
+
+:deep(.n-menu .n-menu-item-content:hover:not(.n-menu-item-content--selected)) {
+  background: #f5f5f5 !important;
+  color: #1677ff !important;
+}
+
+:deep(.n-menu .n-menu-item-content--selected .n-menu-item-content__default-label) {
+  color: #ffffff !important;
 }
 
 .sider-footer {
   padding: 12px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-size: 13px;
+  color: #595959;
 }
 
 .logout-btn {
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: #8c8c8c !important;
+  font-size: 13px;
 }
 
 .logout-btn:hover {
-  color: #ff6b6b !important;
+  color: #ff4d4f !important;
 }
 
 .layout-main {
-  background: #0a0e1a !important;
+  background: #f0f2f5 !important;
 }
 
 :deep(.main-content) {

@@ -119,32 +119,11 @@ onMounted(loadTasks)
   max-width: 1400px;
 }
 
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 24px 0;
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-radius: 12px !important;
-}
-
 .card-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-}
-
-.accent-btn {
-  background: linear-gradient(135deg, #00f0ff, #7c3aed) !important;
-  border: none !important;
-  font-weight: 600;
 }
 
 .accent-btn[disabled] {

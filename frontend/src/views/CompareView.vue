@@ -1,6 +1,6 @@
 <template>
   <div class="compare-page">
-    <h1 class="page-title">对比分析</h1>
+    <h1 class="page-title">性能对比</h1>
 
     <n-card class="glass-card" :bordered="false" title="选择对比任务">
       <n-grid :x-gap="16" :cols="3">
@@ -204,23 +204,23 @@ function buildChartOption(title: string, baselineData: number[], optimizedData: 
     tooltip: { trigger: 'axis' },
     legend: {
       data: ['Baseline', 'Optimized'],
-      textStyle: { color: 'rgba(255,255,255,0.65)' },
+      textStyle: { color: '#595959' },
       top: 0
     },
     grid: { left: 50, right: 20, top: 40, bottom: 30 },
     xAxis: {
       type: 'category',
       data: xLabels,
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.15)' } },
-      axisLabel: { color: 'rgba(255,255,255,0.45)', fontSize: 10 }
+      axisLine: { lineStyle: { color: '#d9d9d9' } },
+      axisLabel: { color: '#8c8c8c', fontSize: 10 }
     },
     yAxis: {
       type: 'value',
       name: yLabel,
-      nameTextStyle: { color: 'rgba(255,255,255,0.45)' },
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.15)' } },
-      axisLabel: { color: 'rgba(255,255,255,0.45)' },
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } }
+      nameTextStyle: { color: '#8c8c8c' },
+      axisLine: { lineStyle: { color: '#d9d9d9' } },
+      axisLabel: { color: '#8c8c8c' },
+      splitLine: { lineStyle: { color: '#f0f0f0' } }
     },
     series: [
       {
@@ -228,11 +228,11 @@ function buildChartOption(title: string, baselineData: number[], optimizedData: 
         type: 'line',
         data: baselineData,
         smooth: true,
-        lineStyle: { color: '#7c3aed', width: 2 },
-        itemStyle: { color: '#7c3aed' },
+        lineStyle: { color: '#8c8c8c', width: 2 },
+        itemStyle: { color: '#8c8c8c' },
         areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(124,58,237,0.3)' },
-          { offset: 1, color: 'rgba(124,58,237,0.02)' }
+          { offset: 0, color: 'rgba(140,140,140,0.15)' },
+          { offset: 1, color: 'rgba(140,140,140,0.02)' }
         ]) }
       },
       {
@@ -240,11 +240,11 @@ function buildChartOption(title: string, baselineData: number[], optimizedData: 
         type: 'line',
         data: optimizedData,
         smooth: true,
-        lineStyle: { color: '#00f0ff', width: 2 },
-        itemStyle: { color: '#00f0ff' },
+        lineStyle: { color: '#1677ff', width: 2 },
+        itemStyle: { color: '#1677ff' },
         areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(0,240,255,0.3)' },
-          { offset: 1, color: 'rgba(0,240,255,0.02)' }
+          { offset: 0, color: 'rgba(22,119,255,0.15)' },
+          { offset: 1, color: 'rgba(22,119,255,0.02)' }
         ]) }
       }
     ]
@@ -305,27 +305,6 @@ onUnmounted(() => {
   max-width: 1400px;
 }
 
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 24px 0;
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-radius: 12px !important;
-}
-
-.accent-btn {
-  background: linear-gradient(135deg, #00f0ff, #7c3aed) !important;
-  border: none !important;
-  font-weight: 600;
-}
-
 .improvement-grid {
   margin: 24px 0;
 }
@@ -336,7 +315,7 @@ onUnmounted(() => {
 }
 
 .metric-label {
-  color: rgba(255, 255, 255, 0.45);
+  color: #8c8c8c;
   font-size: 13px;
   margin-bottom: 8px;
 }
@@ -344,15 +323,15 @@ onUnmounted(() => {
 .metric-value {
   font-size: 28px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
+  color: #595959;
 }
 
 .metric-value.positive {
-  color: #00f0ff;
+  color: #1677ff;
 }
 
 .metric-value.negative {
-  color: #ff6b6b;
+  color: #ff4d4f;
 }
 
 .charts-grid {

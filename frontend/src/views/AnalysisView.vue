@@ -380,9 +380,9 @@ function buildBarOption(categories: string[], values: number[], xLabel: string):
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
-      backgroundColor: '#1a1e2e',
-      borderColor: 'rgba(255,255,255,0.1)',
-      textStyle: { color: '#e2e8f0' },
+      backgroundColor: '#ffffff',
+      borderColor: '#e8e8e8',
+      textStyle: { color: '#1f1f1f' },
     },
     grid: {
       left: '8%',
@@ -394,15 +394,15 @@ function buildBarOption(categories: string[], values: number[], xLabel: string):
     xAxis: {
       type: 'category',
       data: categories,
-      axisLabel: { color: '#94a3b8', fontSize: 11 },
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+      axisLabel: { color: '#8c8c8c', fontSize: 11 },
+      axisLine: { lineStyle: { color: '#d9d9d9' } },
       name: xLabel,
-      nameTextStyle: { color: '#94a3b8' },
+      nameTextStyle: { color: '#8c8c8c' },
     },
     yAxis: {
       type: 'value',
-      axisLabel: { color: '#94a3b8', fontSize: 11 },
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } },
+      axisLabel: { color: '#8c8c8c', fontSize: 11 },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
     },
     series: [
       {
@@ -412,8 +412,8 @@ function buildBarOption(categories: string[], values: number[], xLabel: string):
         itemStyle: {
           borderRadius: [4, 4, 0, 0],
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: '#00f0ff' },
-            { offset: 1, color: '#7c3aed' },
+            { offset: 0, color: '#1677ff' },
+            { offset: 1, color: '#69b1ff' },
           ]),
         },
       },
@@ -521,29 +521,8 @@ onUnmounted(() => {
   max-width: 1400px;
 }
 
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 24px 0;
-}
-
 .top-section {
   margin-bottom: 0;
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-radius: 12px !important;
-}
-
-.accent-btn {
-  background: linear-gradient(135deg, #00f0ff, #7c3aed) !important;
-  border: none !important;
-  font-weight: 600;
 }
 
 .status-display {
@@ -557,12 +536,12 @@ onUnmounted(() => {
 }
 
 .status-label {
-  color: rgba(255, 255, 255, 0.45);
+  color: #8c8c8c;
   font-size: 13px;
 }
 
 .status-value {
-  color: #ffffff;
+  color: #1f1f1f;
   font-size: 14px;
   font-weight: 500;
 }
@@ -570,17 +549,17 @@ onUnmounted(() => {
 .status-value.mono {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #595959;
 }
 
 .status-value.highlight {
-  color: #00f0ff;
+  color: #1677ff;
   font-weight: 700;
   font-size: 18px;
 }
 
 .status-empty {
-  color: rgba(255, 255, 255, 0.3);
+  color: #bfbfbf;
   text-align: center;
   padding: 32px 0;
 }
@@ -595,7 +574,7 @@ onUnmounted(() => {
 }
 
 .metric-label {
-  color: rgba(255, 255, 255, 0.45);
+  color: #8c8c8c;
   font-size: 13px;
   margin-bottom: 8px;
 }
@@ -603,7 +582,7 @@ onUnmounted(() => {
 .metric-value {
   font-size: 28px;
   font-weight: 700;
-  color: #00f0ff;
+  color: #1677ff;
 }
 
 .percentile-row {
@@ -615,9 +594,9 @@ onUnmounted(() => {
 
 .percentile-tag {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: #8c8c8c;
   font-family: 'JetBrains Mono', monospace;
-  background: rgba(255, 255, 255, 0.04);
+  background: #f5f5f5;
   padding: 2px 8px;
   border-radius: 4px;
 }
@@ -642,20 +621,20 @@ onUnmounted(() => {
 }
 
 .suggestion-item {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
   border-radius: 8px;
   padding: 16px;
 }
 
 .suggestion-title {
-  color: #00f0ff;
+  color: #1677ff;
   margin: 0 0 8px 0;
   font-size: 15px;
 }
 
 .suggestion-content {
-  color: rgba(255, 255, 255, 0.65);
+  color: #595959;
   line-height: 1.6;
   margin: 0;
 }

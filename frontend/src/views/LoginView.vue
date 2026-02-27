@@ -2,6 +2,10 @@
   <div class="login-wrapper">
     <n-card class="login-card" :bordered="false">
       <div class="login-header">
+        <svg viewBox="0 0 36 36" width="36" height="36" fill="none" style="margin-bottom: 12px">
+          <rect width="36" height="36" rx="8" fill="#1677ff"/>
+          <path d="M10 18l5 5 11-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <h1 class="login-title">AICP 性能测试工具</h1>
         <p class="login-subtitle">请登录以继续</p>
       </div>
@@ -93,49 +97,44 @@ async function handleLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0a0e1a;
+  background: #f0f2f5;
 }
 
 .login-card {
-  width: 420px;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
+  width: 400px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
   padding: 20px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .login-title {
-  font-size: 26px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #00f0ff, #7c3aed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0 0 8px 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin: 0 0 6px 0;
 }
 
 .login-subtitle {
-  color: rgba(255, 255, 255, 0.45);
+  color: #8c8c8c;
   margin: 0;
   font-size: 14px;
 }
 
 .login-btn {
   margin-top: 8px;
-  background: linear-gradient(135deg, #00f0ff, #7c3aed) !important;
+  background: #1677ff !important;
   border: none !important;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
 .login-btn:hover {
-  opacity: 0.9;
+  background: #4096ff !important;
 }
 </style>

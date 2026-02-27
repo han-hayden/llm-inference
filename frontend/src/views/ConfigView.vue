@@ -1,6 +1,6 @@
 <template>
   <div class="config-page">
-    <h1 class="page-title">代理配置</h1>
+    <h1 class="page-title">服务配置</h1>
 
     <n-grid :x-gap="24" :cols="2">
       <n-gi>
@@ -176,27 +176,6 @@ onMounted(loadConfig)
   max-width: 1200px;
 }
 
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 24px 0;
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-radius: 12px !important;
-}
-
-.accent-btn {
-  background: linear-gradient(135deg, #00f0ff, #7c3aed) !important;
-  border: none !important;
-  font-weight: 600;
-}
-
 .config-display {
   padding: 4px 0;
 }
@@ -208,24 +187,24 @@ onMounted(loadConfig)
 }
 
 .config-label {
-  color: rgba(255, 255, 255, 0.45);
+  color: #8c8c8c;
   font-size: 13px;
 }
 
 .config-value {
-  color: #ffffff;
+  color: #1f1f1f;
   font-size: 14px;
   font-weight: 500;
 }
 
 .config-value.mono {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  color: #00f0ff;
+  color: #1677ff;
   font-size: 13px;
 }
 
 .config-empty {
-  color: rgba(255, 255, 255, 0.3);
+  color: #bfbfbf;
   text-align: center;
   padding: 32px 0;
 }
