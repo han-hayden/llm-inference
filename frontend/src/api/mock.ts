@@ -8,6 +8,13 @@ import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 
 // ============ Seed data ============
 
+let mockProxyConfig: Record<string, any> = {
+  target_host: '127.0.0.1',
+  target_port: 8080,
+  api_type: 'openai_compatible',
+  custom_tokens_jsonpath: '',
+}
+
 const MOCK_TASKS = [
   {
     task_id: 'task-baseline-gpt4o-20260201',
@@ -186,17 +193,18 @@ const routes: MockRoute[] = [
   {
     method: 'get',
     pattern: /\/api\/config\/proxy$/,
-    handler: () => ({
-      target_url: 'https://api.openai.com/v1',
-      listen_port: 8081,
-      model: 'gpt-4o',
-      api_key: 'sk-mock-***',
-    }),
+    handler: () => ({ ...mockProxyConfig }),
   },
   {
     method: 'post',
     pattern: /\/api\/config\/proxy$/,
-    handler: () => ({ status: 'ok' }),
+    handler: (_m, config) => {
+      const body = typeof config.data === 'string' ? JSON.parse(config.data) : config.data
+      if (body) {
+        mockProxyConfig = { ...mockProxyConfig, ...body }
+      }
+      return { status: 'ok' }
+    },
   },
   // Collect
   {

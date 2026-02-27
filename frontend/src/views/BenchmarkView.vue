@@ -26,11 +26,11 @@
       </div>
 
       <!-- Inline form -->
-      <n-form label-placement="left" label-width="80px" style="max-width: 640px">
-        <n-grid :x-gap="16" :cols="2">
+      <n-form label-placement="left" label-width="80px">
+        <n-grid :x-gap="24" :cols="2">
           <n-gi>
             <n-form-item label="测试名称">
-              <n-input v-model:value="form.name" placeholder="例如 benchmark-gpt4o-v2" size="small" />
+              <n-input v-model:value="form.name" placeholder="例如 benchmark-gpt4o-v2" />
             </n-form-item>
           </n-gi>
           <n-gi>
@@ -41,15 +41,14 @@
                 :loading="collectLoading"
                 filterable
                 placeholder="选择采集任务"
-                size="small"
               />
             </n-form-item>
           </n-gi>
         </n-grid>
-        <n-grid :x-gap="16" :cols="4">
+        <n-grid :x-gap="24" :cols="2">
           <n-gi>
             <n-form-item label="目标主机">
-              <n-input v-model:value="form.target_host" placeholder="127.0.0.1" size="small" />
+              <n-input v-model:value="form.target_host" placeholder="例如 127.0.0.1" />
             </n-form-item>
           </n-gi>
           <n-gi>
@@ -59,11 +58,12 @@
                 :min="1"
                 :max="65535"
                 placeholder="8080"
-                size="small"
                 style="width: 100%"
               />
             </n-form-item>
           </n-gi>
+        </n-grid>
+        <n-grid :x-gap="24" :cols="2">
           <n-gi>
             <n-form-item label="并发数">
               <n-input-number
@@ -71,7 +71,6 @@
                 :min="1"
                 :max="500"
                 placeholder="1"
-                size="small"
                 style="width: 100%"
               />
             </n-form-item>
@@ -81,19 +80,17 @@
               <n-select
                 v-model:value="form.replay_mode"
                 :options="replayModeOptions"
-                size="small"
               />
             </n-form-item>
           </n-gi>
         </n-grid>
-        <n-grid :x-gap="16" :cols="4">
+        <n-grid :x-gap="24" :cols="2">
           <n-gi>
             <n-form-item label="延迟(ms)">
               <n-input-number
                 v-model:value="form.delay_ms"
                 :min="0"
                 placeholder="0"
-                size="small"
                 style="width: 100%"
               />
             </n-form-item>
@@ -104,23 +101,21 @@
                 v-model:value="form.timeout_s"
                 :min="1"
                 placeholder="60"
-                size="small"
                 style="width: 100%"
               />
             </n-form-item>
           </n-gi>
-          <n-gi :span="2" style="display: flex; align-items: flex-start; padding-top: 26px;">
-            <n-button
-              type="primary"
-              class="accent-btn"
-              size="small"
-              :loading="starting"
-              @click="handleStart"
-            >
-              开始测试
-            </n-button>
-          </n-gi>
         </n-grid>
+        <n-form-item label=" ">
+          <n-button
+            type="primary"
+            class="accent-btn"
+            :loading="starting"
+            @click="handleStart"
+          >
+            开始测试
+          </n-button>
+        </n-form-item>
       </n-form>
     </n-card>
 
