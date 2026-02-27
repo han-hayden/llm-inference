@@ -26,10 +26,12 @@ frontend/dist/
 *.sqlite
 sxf-results/
 
-# Env
+# Env & secrets
 .env
 .env.local
 .env.*.local
+cloud-env.md
+k8s-cluster-info.md
 
 # OS
 .DS_Store
