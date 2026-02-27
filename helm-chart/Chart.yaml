@@ -1,0 +1,6 @@
+apiVersion: v2
+name: aicp-perf-tool
+description: Sangfor AICP LLM Inference Performance Testing Tool
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

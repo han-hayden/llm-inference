@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-aicp-perf
+  labels:
+    app: aicp-perf-tool
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: aicp-perf-tool
+  template:
+    metadata:
+      labels:
+        app: aicp-perf-tool
+    spec:
+      containers:
+        - name: aicp-perf-tool
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: api
+              containerPort: 8081
+            - name: ssh
+              containerPort: 22
+          env:
+            - name: AICP_DATA_DIR
+              value: "{{ .Values.storage.dataDir }}"
+            - name: AICP_ADMIN_USERNAME
+              value: "{{ .Values.config.adminUsername }}"
+            - name: AICP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: admin-password
+            - name: AICP_MAX_RECORDS_PER_FILE
+              value: "{{ .Values.config.maxRecordsPerFile }}"
+            - name: AICP_FLUSH_INTERVAL
+              value: "{{ .Values.config.flushInterval }}"
+            - name: AICP_FLUSH_BATCH
+              value: "{{ .Values.config.flushBatch }}"
+            - name: SSH_ENABLED
+              value: "{{ .Values.ssh.enabled }}"
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.storage.dataDir }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-data
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

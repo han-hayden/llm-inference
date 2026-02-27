@@ -1,0 +1,43 @@
+replicaCount: 1
+
+image:
+  repository: aicp-perf-tool
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080           # Frontend
+  proxyPort: 8081      # API / Proxy
+  sshPort: 22          # SSH
+
+storage:
+  dataDir: /data/results
+  pvcSize: 10Gi
+  storageClass: ""     # Empty uses default
+
+config:
+  adminUsername: admin
+  adminPassword: changeme
+  maxRecordsPerFile: 1000
+  flushInterval: 5
+  flushBatch: 10
+
+ssh:
+  enabled: "true"
+
+tokenizer:
+  enabled: false
+  modelPath: ""
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

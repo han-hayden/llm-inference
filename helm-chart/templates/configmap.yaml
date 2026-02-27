@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  labels:
+    app: aicp-perf-tool
+data:
+  DATA_DIR: "{{ .Values.storage.dataDir }}"
+  MAX_RECORDS_PER_FILE: "{{ .Values.config.maxRecordsPerFile }}"
+  FLUSH_INTERVAL: "{{ .Values.config.flushInterval }}"
+  SSH_ENABLED: "{{ .Values.ssh.enabled }}"

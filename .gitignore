@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data & DB
+/data/
+*.db
+*.sqlite
+sxf-results/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reports temp
+_tmp_*.png
+
+# Archives
+*.zip
+
+# Third-party subproject (vendored separately)
+llm-inference-forward/
+
+# Design assets & macOS metadata
+interact-pngs/
+__MACOSX/
+
+# Office documents (requirements specs kept in docs/)
+*.docx
+*.xlsx
+
+# Prompt engineering notes (not source code)
+*提示词*
