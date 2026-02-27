@@ -2,94 +2,79 @@
   <div class="config-page">
     <h1 class="page-title">服务配置</h1>
 
-    <n-grid :x-gap="24" :cols="2">
-      <n-gi>
-        <n-card class="glass-card" :bordered="false" title="编辑配置">
-          <n-form
-            ref="formRef"
-            :model="formData"
-            :rules="rules"
-            label-placement="top"
-            label-width="auto"
-          >
-            <n-form-item label="目标主机" path="target_host">
-              <n-input v-model:value="formData.target_host" placeholder="例如 127.0.0.1 或 api.example.com" />
-            </n-form-item>
-            <n-form-item label="目标端口" path="target_port">
-              <n-input-number
-                v-model:value="formData.target_port"
-                :min="1"
-                :max="65535"
-                placeholder="e.g. 8080"
-                style="width: 100%"
-              />
-            </n-form-item>
-            <n-form-item label="API 类型" path="api_type">
-              <n-select
-                v-model:value="formData.api_type"
-                :options="apiTypeOptions"
-                placeholder="选择 API 类型"
-              />
-            </n-form-item>
-            <n-form-item
-              v-if="formData.api_type === 'custom'"
-              label="自定义 Tokens JSONPath"
-              path="custom_tokens_jsonpath"
-            >
-              <n-input
-                v-model:value="formData.custom_tokens_jsonpath"
-                placeholder="e.g. $.choices[0].delta.content"
-              />
-            </n-form-item>
-            <n-form-item>
-              <n-button
-                type="primary"
-                :loading="saving"
-                class="accent-btn"
-                @click="handleSave"
-              >
-                保存配置
-              </n-button>
-            </n-form-item>
-          </n-form>
-        </n-card>
-      </n-gi>
+    <n-card class="glass-card" :bordered="false">
+      <!-- Current config summary bar -->
+      <div class="config-status-bar" v-if="currentConfig && !loading">
+        <div class="status-bar-item">
+          <span class="status-bar-label">当前目标</span>
+          <span class="status-bar-value">{{ currentConfig.target_host ?? '-' }}:{{ currentConfig.target_port ?? '-' }}</span>
+        </div>
+        <div class="status-bar-item">
+          <span class="status-bar-label">API 类型</span>
+          <n-tag :type="currentConfig.api_type === 'openai_compatible' ? 'info' : 'warning'" size="small" :bordered="false">
+            {{ currentConfig.api_type ?? '-' }}
+          </n-tag>
+        </div>
+        <template v-if="currentConfig.api_type === 'custom'">
+          <div class="status-bar-item">
+            <span class="status-bar-label">JSONPath</span>
+            <span class="status-bar-value mono">{{ currentConfig.custom_tokens_jsonpath ?? '-' }}</span>
+          </div>
+        </template>
+      </div>
 
-      <n-gi>
-        <n-card class="glass-card" :bordered="false" title="当前生效配置">
-          <n-spin :show="loading">
-            <div v-if="currentConfig" class="config-display">
-              <div class="config-item">
-                <span class="config-label">目标主机</span>
-                <span class="config-value">{{ currentConfig.target_host ?? '-' }}</span>
-              </div>
-              <n-divider style="margin: 12px 0" />
-              <div class="config-item">
-                <span class="config-label">目标端口</span>
-                <span class="config-value">{{ currentConfig.target_port ?? '-' }}</span>
-              </div>
-              <n-divider style="margin: 12px 0" />
-              <div class="config-item">
-                <span class="config-label">API 类型</span>
-                <n-tag :type="currentConfig.api_type === 'openai_compatible' ? 'info' : 'warning'" size="small" :bordered="false">
-                  {{ currentConfig.api_type ?? '-' }}
-                </n-tag>
-              </div>
-              <template v-if="currentConfig.api_type === 'custom'">
-                <n-divider style="margin: 12px 0" />
-                <div class="config-item">
-                  <span class="config-label">Tokens JSONPath 路径</span>
-                  <span class="config-value mono">{{ currentConfig.custom_tokens_jsonpath ?? '-' }}</span>
-                </div>
-              </template>
-            </div>
-            <div v-else class="config-empty">
-              尚未加载配置。
-            </div>
-          </n-spin>
-        </n-card>
-      </n-gi>
-    </n-grid>
+      <n-divider v-if="currentConfig && !loading" style="margin: 16px 0" />
+
+      <!-- Edit form -->
+      <n-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-placement="left"
+        label-width="120px"
+        style="max-width: 560px"
+      >
+        <n-form-item label="目标主机" path="target_host">
+          <n-input v-model:value="formData.target_host" placeholder="例如 127.0.0.1 或 api.example.com" />
+        </n-form-item>
+        <n-form-item label="目标端口" path="target_port">
+          <n-input-number
+            v-model:value="formData.target_port"
+            :min="1"
+            :max="65535"
+            placeholder="e.g. 8080"
+            style="width: 100%"
+          />
+        </n-form-item>
+        <n-form-item label="API 类型" path="api_type">
+          <n-select
+            v-model:value="formData.api_type"
+            :options="apiTypeOptions"
+            placeholder="选择 API 类型"
+          />
+        </n-form-item>
+        <n-form-item
+          v-if="formData.api_type === 'custom'"
+          label="Tokens JSONPath"
+          path="custom_tokens_jsonpath"
+        >
+          <n-input
+            v-model:value="formData.custom_tokens_jsonpath"
+            placeholder="e.g. $.choices[0].delta.content"
+          />
+        </n-form-item>
+        <n-form-item label=" ">
+          <n-button
+            type="primary"
+            :loading="saving"
+            class="accent-btn"
+            @click="handleSave"
+          >
+            保存配置
+          </n-button>
+        </n-form-item>
+      </n-form>
+    </n-card>
   </div>
 </template>
 
@@ -173,39 +158,35 @@ onMounted(loadConfig)
 
 <style scoped>
 .config-page {
-  max-width: 1200px;
+  max-width: 800px;
 }
 
-.config-display {
-  padding: 4px 0;
-}
-
-.config-item {
+.config-status-bar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
 }
 
-.config-label {
+.status-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-bar-label {
   color: #8c8c8c;
   font-size: 13px;
 }
 
-.config-value {
+.status-bar-value {
   color: #1f1f1f;
   font-size: 14px;
   font-weight: 500;
 }
 
-.config-value.mono {
+.status-bar-value.mono {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   color: #1677ff;
   font-size: 13px;
-}
-
-.config-empty {
-  color: #bfbfbf;
-  text-align: center;
-  padding: 32px 0;
 }
 </style>

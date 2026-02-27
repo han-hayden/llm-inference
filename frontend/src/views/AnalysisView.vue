@@ -2,96 +2,87 @@
   <div class="analysis-page">
     <h1 class="page-title">性能分析</h1>
 
-    <!-- Data Collection Section -->
-    <n-grid :x-gap="24" :cols="2" class="top-section">
-      <n-gi>
-        <n-card class="glass-card" :bordered="false" title="数据采集">
-          <n-form label-placement="top" label-width="auto">
-            <n-form-item label="采集名称">
-              <n-input v-model:value="form.name" placeholder="例如 baseline-gpt4o-20260101" />
-            </n-form-item>
-            <n-form-item label="停止方式">
-              <n-radio-group v-model:value="form.stop_type">
-                <n-space>
-                  <n-radio value="count">按次数</n-radio>
-                  <n-radio value="time">按时间（秒）</n-radio>
-                </n-space>
-              </n-radio-group>
-            </n-form-item>
-            <n-form-item :label="form.stop_type === 'count' ? '请求次数' : '持续时间（秒）'">
-              <n-input-number
-                v-model:value="form.stop_value"
-                :min="1"
-                placeholder="请输入数值"
-                style="width: 100%"
-              />
-            </n-form-item>
-            <n-space>
-              <n-button
-                type="primary"
-                class="accent-btn"
-                :loading="starting"
-                :disabled="isActive"
-                @click="handleStart"
-              >
-                开始采集
-              </n-button>
-              <n-button
-                type="error"
-                ghost
-                :disabled="!isActive"
-                :loading="stopping"
-                @click="handleStop"
-              >
-                停止采集
-              </n-button>
-            </n-space>
-          </n-form>
-        </n-card>
-      </n-gi>
+    <!-- Data Collection: single card with status bar + form -->
+    <n-card class="glass-card" :bordered="false">
+      <!-- Status bar -->
+      <div class="collect-status-bar">
+        <div class="status-bar-item">
+          <span class="status-bar-label">采集状态</span>
+          <n-tag :type="isActive ? 'success' : 'default'" size="small" :bordered="false">
+            {{ collectStatus?.status ?? 'idle' }}
+          </n-tag>
+        </div>
+        <template v-if="collectStatus?.task_id">
+          <div class="status-bar-item">
+            <span class="status-bar-label">已采集</span>
+            <span class="status-bar-value highlight">{{ collectStatus.collected_count ?? 0 }}</span>
+          </div>
+          <div class="status-bar-item">
+            <span class="status-bar-label">已用时</span>
+            <span class="status-bar-value">{{ collectStatus.elapsed_seconds ?? 0 }}s</span>
+          </div>
+        </template>
+        <template v-if="isActive && collectStatus?.progress != null">
+          <div class="status-bar-progress">
+            <n-progress
+              type="line"
+              :percentage="Math.min(Math.round(collectStatus.progress * 100), 100)"
+              :indicator-placement="'inside'"
+              processing
+              style="width: 160px"
+            />
+          </div>
+        </template>
+      </div>
 
-      <n-gi>
-        <n-card class="glass-card" :bordered="false" title="采集状态">
-          <n-spin :show="statusLoading">
-            <div v-if="collectStatus" class="status-display">
-              <div class="status-row">
-                <span class="status-label">状态</span>
-                <n-tag :type="isActive ? 'success' : 'default'" size="small" :bordered="false">
-                  {{ collectStatus.status ?? 'idle' }}
-                </n-tag>
-              </div>
-              <n-divider style="margin: 12px 0" />
-              <div class="status-row">
-                <span class="status-label">任务ID</span>
-                <span class="status-value mono">{{ collectStatus.task_id ?? '-' }}</span>
-              </div>
-              <n-divider style="margin: 12px 0" />
-              <div class="status-row">
-                <span class="status-label">已采集</span>
-                <span class="status-value highlight">{{ collectStatus.collected_count ?? 0 }}</span>
-              </div>
-              <n-divider style="margin: 12px 0" />
-              <div class="status-row">
-                <span class="status-label">已用时</span>
-                <span class="status-value">{{ collectStatus.elapsed_seconds ?? 0 }}s</span>
-              </div>
-              <template v-if="isActive && collectStatus.progress != null">
-                <n-divider style="margin: 12px 0" />
-                <n-progress
-                  type="line"
-                  :percentage="Math.min(Math.round(collectStatus.progress * 100), 100)"
-                  :indicator-placement="'inside'"
-                  processing
-                />
-              </template>
-            </div>
-            <div v-else class="status-empty">
-              暂无进行中的采集任务。
-            </div>
-          </n-spin>
-        </n-card>
-      </n-gi>
-    </n-grid>
+      <n-divider style="margin: 16px 0" />
+
+      <!-- Inline form -->
+      <n-form label-placement="left" label-width="80px" inline style="flex-wrap: wrap; gap: 8px 0">
+        <n-form-item label="采集名称" style="width: 280px">
+          <n-input v-model:value="form.name" placeholder="例如 baseline-gpt4o-20260101" size="small" />
+        </n-form-item>
+        <n-form-item label="停止方式" style="width: 200px">
+          <n-radio-group v-model:value="form.stop_type" size="small">
+            <n-radio value="count">次数</n-radio>
+            <n-radio value="time">时间</n-radio>
+          </n-radio-group>
+        </n-form-item>
+        <n-form-item :label="form.stop_type === 'count' ? '请求次数' : '持续(秒)'" style="width: 180px">
+          <n-input-number
+            v-model:value="form.stop_value"
+            :min="1"
+            placeholder="数值"
+            size="small"
+            style="width: 100%"
+          />
+        </n-form-item>
+        <n-form-item label=" " style="width: auto">
+          <n-space size="small">
+            <n-button
+              type="primary"
+              class="accent-btn"
+              size="small"
+              :loading="starting"
+              :disabled="isActive"
+              @click="handleStart"
+            >
+              开始采集
+            </n-button>
+            <n-button
+              type="error"
+              ghost
+              size="small"
+              :disabled="!isActive"
+              :loading="stopping"
+              @click="handleStop"
+            >
+              停止采集
+            </n-button>
+          </n-space>
+        </n-form-item>
+      </n-form>
+    </n-card>
 
     <!-- Divider -->
     <n-divider />
@@ -521,41 +512,39 @@ onUnmounted(() => {
   max-width: 1400px;
 }
 
-.top-section {
-  margin-bottom: 0;
-}
-
-.status-display {
-  padding: 4px 0;
-}
-
-.status-row {
+.collect-status-bar {
   display: flex;
-  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
   align-items: center;
 }
 
-.status-label {
+.status-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-bar-label {
   color: #8c8c8c;
   font-size: 13px;
 }
 
-.status-value {
+.status-bar-value {
   color: #1f1f1f;
   font-size: 14px;
   font-weight: 500;
 }
 
-.status-value.mono {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 12px;
-  color: #595959;
-}
-
-.status-value.highlight {
+.status-bar-value.highlight {
   color: #1677ff;
   font-weight: 700;
   font-size: 18px;
+}
+
+.status-bar-progress {
+  display: flex;
+  align-items: center;
 }
 
 .status-empty {

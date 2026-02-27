@@ -2,13 +2,38 @@
   <div class="benchmark-page">
     <h1 class="page-title">性能压测</h1>
 
-    <n-grid :x-gap="24" :cols="2" class="top-section">
-      <n-gi>
-        <n-card class="glass-card" :bordered="false" title="新建基准测试">
-          <n-form label-placement="top" label-width="auto">
+    <n-card class="glass-card" :bordered="false">
+      <!-- Running benchmarks status bar -->
+      <div class="benchmark-status-bar" v-if="runningBenchmarks.length > 0">
+        <div v-for="bm in runningBenchmarks" :key="bm.task_id" class="running-item">
+          <div class="running-header">
+            <span class="status-bar-label">运行中</span>
+            <span class="running-name">{{ bm.name ?? bm.task_id }}</span>
+            <n-tag type="success" size="small" :bordered="false">running</n-tag>
+          </div>
+          <div class="running-progress">
+            <n-progress
+              type="line"
+              :percentage="Math.min(Math.round((bm.progress ?? 0) * 100), 100)"
+              :indicator-placement="'inside'"
+              processing
+              style="width: 200px"
+            />
+            <span class="running-detail">{{ bm.completed ?? 0 }} / {{ bm.total ?? '?' }} 请求</span>
+          </div>
+        </div>
+        <n-divider style="margin: 16px 0" />
+      </div>
+
+      <!-- Inline form -->
+      <n-form label-placement="left" label-width="80px" style="max-width: 640px">
+        <n-grid :x-gap="16" :cols="2">
+          <n-gi>
             <n-form-item label="测试名称">
-              <n-input v-model:value="form.name" placeholder="例如 benchmark-gpt4o-v2" />
+              <n-input v-model:value="form.name" placeholder="例如 benchmark-gpt4o-v2" size="small" />
             </n-form-item>
+          </n-gi>
+          <n-gi>
             <n-form-item label="源任务">
               <n-select
                 v-model:value="form.source_task_id"
@@ -16,105 +41,88 @@
                 :loading="collectLoading"
                 filterable
                 placeholder="选择采集任务"
+                size="small"
               />
             </n-form-item>
-            <n-grid :x-gap="12" :cols="2">
-              <n-gi>
-                <n-form-item label="目标主机">
-                  <n-input v-model:value="form.target_host" placeholder="e.g. 127.0.0.1" />
-                </n-form-item>
-              </n-gi>
-              <n-gi>
-                <n-form-item label="目标端口">
-                  <n-input-number
-                    v-model:value="form.target_port"
-                    :min="1"
-                    :max="65535"
-                    placeholder="8080"
-                    style="width: 100%"
-                  />
-                </n-form-item>
-              </n-gi>
-            </n-grid>
-            <n-grid :x-gap="12" :cols="2">
-              <n-gi>
-                <n-form-item label="并发数">
-                  <n-input-number
-                    v-model:value="form.concurrency"
-                    :min="1"
-                    :max="500"
-                    placeholder="1"
-                    style="width: 100%"
-                  />
-                </n-form-item>
-              </n-gi>
-              <n-gi>
-                <n-form-item label="回放模式">
-                  <n-select
-                    v-model:value="form.replay_mode"
-                    :options="replayModeOptions"
-                  />
-                </n-form-item>
-              </n-gi>
-            </n-grid>
-            <n-grid :x-gap="12" :cols="2">
-              <n-gi>
-                <n-form-item label="延迟 (ms)">
-                  <n-input-number
-                    v-model:value="form.delay_ms"
-                    :min="0"
-                    placeholder="0"
-                    style="width: 100%"
-                  />
-                </n-form-item>
-              </n-gi>
-              <n-gi>
-                <n-form-item label="超时 (s)">
-                  <n-input-number
-                    v-model:value="form.timeout_s"
-                    :min="1"
-                    placeholder="60"
-                    style="width: 100%"
-                  />
-                </n-form-item>
-              </n-gi>
-            </n-grid>
+          </n-gi>
+        </n-grid>
+        <n-grid :x-gap="16" :cols="4">
+          <n-gi>
+            <n-form-item label="目标主机">
+              <n-input v-model:value="form.target_host" placeholder="127.0.0.1" size="small" />
+            </n-form-item>
+          </n-gi>
+          <n-gi>
+            <n-form-item label="目标端口">
+              <n-input-number
+                v-model:value="form.target_port"
+                :min="1"
+                :max="65535"
+                placeholder="8080"
+                size="small"
+                style="width: 100%"
+              />
+            </n-form-item>
+          </n-gi>
+          <n-gi>
+            <n-form-item label="并发数">
+              <n-input-number
+                v-model:value="form.concurrency"
+                :min="1"
+                :max="500"
+                placeholder="1"
+                size="small"
+                style="width: 100%"
+              />
+            </n-form-item>
+          </n-gi>
+          <n-gi>
+            <n-form-item label="回放模式">
+              <n-select
+                v-model:value="form.replay_mode"
+                :options="replayModeOptions"
+                size="small"
+              />
+            </n-form-item>
+          </n-gi>
+        </n-grid>
+        <n-grid :x-gap="16" :cols="4">
+          <n-gi>
+            <n-form-item label="延迟(ms)">
+              <n-input-number
+                v-model:value="form.delay_ms"
+                :min="0"
+                placeholder="0"
+                size="small"
+                style="width: 100%"
+              />
+            </n-form-item>
+          </n-gi>
+          <n-gi>
+            <n-form-item label="超时(s)">
+              <n-input-number
+                v-model:value="form.timeout_s"
+                :min="1"
+                placeholder="60"
+                size="small"
+                style="width: 100%"
+              />
+            </n-form-item>
+          </n-gi>
+          <n-gi :span="2" style="display: flex; align-items: flex-start; padding-top: 26px;">
             <n-button
               type="primary"
               class="accent-btn"
+              size="small"
               :loading="starting"
               @click="handleStart"
             >
               开始测试
             </n-button>
-          </n-form>
-        </n-card>
-      </n-gi>
-
-      <n-gi>
-        <n-card class="glass-card" :bordered="false" title="运行中的测试">
-          <div v-if="runningBenchmarks.length === 0" class="empty-text">
-            暂无运行中的测试。
-          </div>
-          <div v-for="bm in runningBenchmarks" :key="bm.task_id" class="progress-item">
-            <div class="progress-header">
-              <span class="progress-name">{{ bm.name ?? bm.task_id }}</span>
-              <n-tag type="success" size="small" :bordered="false">running</n-tag>
-            </div>
-            <n-progress
-              type="line"
-              :percentage="Math.min(Math.round((bm.progress ?? 0) * 100), 100)"
-              :indicator-placement="'inside'"
-              processing
-              style="margin-top: 8px"
-            />
-            <div class="progress-detail">
-              {{ bm.completed ?? 0 }} / {{ bm.total ?? '?' }} 请求
-            </div>
-          </div>
-        </n-card>
-      </n-gi>
-    </n-grid>
+          </n-gi>
+        </n-grid>
+      </n-form>
+    </n-card>
 
     <n-card class="glass-card table-card" :bordered="false" title="历史测试">
       <n-data-table
@@ -296,41 +304,45 @@ onUnmounted(stopPolling)
   max-width: 1400px;
 }
 
-.top-section {
-  margin-bottom: 24px;
-}
-
-.empty-text {
-  color: #bfbfbf;
-  text-align: center;
-  padding: 32px 0;
-}
-
-.progress-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.progress-item:last-child {
-  border-bottom: none;
-}
-
-.progress-header {
+.benchmark-status-bar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.progress-name {
+.running-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.running-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-bar-label {
+  color: #8c8c8c;
+  font-size: 13px;
+}
+
+.running-name {
   color: #1f1f1f;
   font-weight: 500;
   font-size: 14px;
 }
 
-.progress-detail {
+.running-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.running-detail {
   color: #8c8c8c;
   font-size: 12px;
-  margin-top: 4px;
+  white-space: nowrap;
 }
 
 .table-card {

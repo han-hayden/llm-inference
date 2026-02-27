@@ -130,12 +130,13 @@ function handleLogout() {
   padding-top: 4px;
 }
 
-/* Active menu item: blue background + white text + left blue bar */
+/* Active menu item: blue left bar + blue text on light blue bg */
 :deep(.n-menu-item-content--selected) {
-  background: #1677ff !important;
-  color: #ffffff !important;
+  background: #e6f4ff !important;
+  color: #1677ff !important;
   border-radius: 0 !important;
   margin: 0 !important;
+  font-weight: 500;
 }
 
 :deep(.n-menu-item-content--selected::before) {
@@ -158,6 +159,8 @@ function handleLogout() {
   border-radius: 0 !important;
   padding-left: 20px !important;
   height: 44px;
+  font-size: 14px;
+  color: #595959;
 }
 
 :deep(.n-menu .n-menu-item-content:hover:not(.n-menu-item-content--selected)) {
@@ -166,7 +169,8 @@ function handleLogout() {
 }
 
 :deep(.n-menu .n-menu-item-content--selected .n-menu-item-content__default-label) {
-  color: #ffffff !important;
+  color: #1677ff !important;
+  font-weight: 500;
 }
 
 .sider-footer {
