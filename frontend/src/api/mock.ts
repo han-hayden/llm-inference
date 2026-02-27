@@ -18,37 +18,50 @@ let mockProxyConfig: Record<string, any> = {
 const MOCK_TASKS = [
   {
     task_id: 'task-baseline-gpt4o-20260201',
-    name: 'baseline-gpt4o-20260201',
+    name: 'baseline-gpt4o-FP16-TP1',
     type: 'collect',
     status: 'completed',
-    record_count: 256,
+    record_count: 500,
     created_at: '2026-02-01 10:30:00',
   },
   {
     task_id: 'task-optimized-gpt4o-20260210',
-    name: 'optimized-gpt4o-20260210',
+    name: 'optimized-gpt4o-INT8-TP2-PrefixCache',
     type: 'collect',
     status: 'completed',
-    record_count: 256,
+    record_count: 500,
     created_at: '2026-02-10 14:20:00',
   },
   {
     task_id: 'task-baseline-deepseek-20260215',
-    name: 'baseline-deepseek-20260215',
+    name: 'baseline-deepseek-FP16-TP1',
     type: 'collect',
     status: 'completed',
-    record_count: 128,
+    record_count: 300,
     created_at: '2026-02-15 09:00:00',
   },
   {
+    task_id: 'task-optimized-deepseek-20260218',
+    name: 'optimized-deepseek-AWQ-TP4-ContBatch',
+    type: 'collect',
+    status: 'completed',
+    record_count: 300,
+    created_at: '2026-02-18 11:15:00',
+  },
+  {
     task_id: 'task-bench-concurrency-20260220',
-    name: 'bench-concurrency-20260220',
+    name: 'bench-concurrency-stress-test',
     type: 'benchmark',
     status: 'completed',
-    record_count: 512,
+    record_count: 1000,
     created_at: '2026-02-20 16:45:00',
   },
 ]
+
+/** Check if a task_id belongs to an optimized (post-tuning) run */
+function isOptimizedTask(taskId: string): boolean {
+  return taskId.includes('optimized')
+}
 
 function rand(min: number, max: number) {
   return Math.round((Math.random() * (max - min) + min) * 100) / 100
@@ -58,77 +71,116 @@ function randInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-function buildMetricsSummary() {
+function buildMetricsSummary(taskId: string) {
+  if (isOptimizedTask(taskId)) {
+    // ── Optimized: INT8 quantization + TP2 + Prefix Caching + Continuous Batching ──
+    return {
+      ttft_avg: 92.4,    ttft_p50: 78.1,    ttft_p90: 163.5,   ttft_p99: 287.2,
+      tpot_avg: 12.8,    tpot_p50: 10.5,    tpot_p90: 23.7,    tpot_p99: 41.3,
+      tps_avg: 78.1,     tps_p50: 85.2,     tps_p90: 53.6,     tps_p99: 39.4,
+      e2e_avg: 1580,     e2e_p50: 1290,     e2e_p90: 2950,     e2e_p99: 4620,
+    }
+  }
+  // ── Baseline: FP16 / TP=1 / no caching / naive batching ──
   return {
-    ttft_avg: rand(120, 280),
-    ttft_p50: rand(100, 200),
-    ttft_p90: rand(250, 400),
-    ttft_p99: rand(450, 800),
-    tpot_avg: rand(15, 35),
-    tpot_p50: rand(12, 28),
-    tpot_p90: rand(30, 55),
-    tpot_p99: rand(55, 90),
-    tps_avg: rand(35, 75),
-    tps_p50: rand(40, 70),
-    tps_p90: rand(25, 40),
-    tps_p99: rand(15, 30),
-    e2e_avg: rand(800, 2500),
-    e2e_p50: rand(600, 2000),
-    e2e_p90: rand(2000, 4000),
-    e2e_p99: rand(4000, 6000),
+    ttft_avg: 523.6,   ttft_p50: 448.2,   ttft_p90: 982.1,   ttft_p99: 1836.5,
+    tpot_avg: 67.5,    tpot_p50: 57.8,    tpot_p90: 124.3,   tpot_p99: 208.7,
+    tps_avg: 14.8,     tps_p50: 17.3,     tps_p90: 8.1,      tps_p99: 4.8,
+    e2e_avg: 9180,     e2e_p50: 7450,     e2e_p90: 17820,    e2e_p99: 28350,
   }
 }
 
-function buildDistributions() {
+function buildDistributions(taskId: string) {
+  if (isOptimizedTask(taskId)) {
+    return {
+      context_length: {
+        labels: ['0-512', '512-1K', '1K-2K', '2K-4K', '4K-8K', '8K-16K', '16K+'],
+        values: [12, 28, 55, 82, 45, 22, 8],
+      },
+      response_latency: {
+        // Most requests complete fast — heavy left skew
+        labels: ['0-200', '200-500', '500-1K', '1K-2K', '2K-3K', '3K-5K', '5K+'],
+        values: [85, 120, 95, 42, 12, 4, 1],
+      },
+      cache_hit_rate: {
+        // Prefix caching ON → high hit rates
+        labels: ['0%', '0-20%', '20-40%', '40-60%', '60-80%', '80-100%'],
+        values: [5, 8, 15, 35, 72, 118],
+      },
+    }
+  }
   return {
     context_length: {
       labels: ['0-512', '512-1K', '1K-2K', '2K-4K', '4K-8K', '8K-16K', '16K+'],
-      values: [randInt(5, 20), randInt(15, 40), randInt(30, 60), randInt(40, 80), randInt(20, 50), randInt(10, 30), randInt(3, 15)],
+      values: [10, 25, 52, 78, 43, 20, 7],
     },
     response_latency: {
+      // No optimization → heavy right tail, lots of slow requests
       labels: ['0-200', '200-500', '500-1K', '1K-2K', '2K-3K', '3K-5K', '5K+'],
-      values: [randInt(10, 30), randInt(25, 55), randInt(40, 70), randInt(30, 60), randInt(15, 35), randInt(8, 20), randInt(2, 10)],
+      values: [8, 18, 35, 68, 82, 95, 55],
     },
     cache_hit_rate: {
+      // No prefix caching → almost all misses
       labels: ['0%', '0-20%', '20-40%', '40-60%', '60-80%', '80-100%'],
-      values: [randInt(15, 30), randInt(10, 25), randInt(20, 40), randInt(30, 55), randInt(25, 45), randInt(35, 65)],
+      values: [145, 52, 28, 15, 8, 3],
     },
   }
 }
 
-function buildSuggestions() {
+function buildSuggestions(taskId: string) {
+  if (isOptimizedTask(taskId)) {
+    return [
+      {
+        title: '优化效果确认：Prefix Caching 生效',
+        content: '当前缓存命中率达 75.3%，TTFT 从基线的 523.6ms 降至 92.4ms（降幅 82.4%）。System Prompt 前缀（平均 1,200 tokens）已被有效复用。建议持续监控缓存命中率，若低于 60% 可考虑增大 KV Cache 池大小。',
+      },
+      {
+        title: '优化效果确认：INT8 量化 + TP2 并行',
+        content: '量化后 TPS 从 14.8 提升至 78.1（提升 5.3 倍），TPOT 从 67.5ms 降至 12.8ms（降幅 81.0%）。Perplexity 增幅仅 0.3%，输出质量无明显损失。GPU 显存利用率从 92% 降至 51%，剩余空间可支撑更大 batch size。',
+      },
+      {
+        title: '进一步优化：启用 Speculative Decoding',
+        content: '当前 TPOT P99 仍有 41.3ms，长输出场景（>1000 tokens）解码阶段占总延迟 60% 以上。建议引入 Draft Model（如 gpt-4o-mini）做 Speculative Decoding，预计可再将 TPOT 降低 30-40%，TPS 提升至 100+ tokens/s。',
+      },
+      {
+        title: '进一步优化：动态批处理调参',
+        content: '当前 continuous batching 的 max_num_seqs=128，但监测到峰值并发仅 64。建议将 max_num_seqs 调至 256 并启用 chunked prefill（chunk_size=512），预计可在不影响 P99 延迟的前提下将整体吞吐量再提升 20-30%。',
+      },
+    ]
+  }
   return [
     {
-      title: '启用 KV Cache 前缀复用',
-      content: '检测到约 62% 的请求具有相同的 System Prompt 前缀（平均 1,200 tokens）。启用 Prefix Caching 后预计可将 TTFT 降低 40-55%，同时减少 GPU 显存占用约 15%。建议在推理引擎配置中开启 enable_prefix_caching=true。',
+      title: '强烈建议：启用 KV Cache 前缀复用',
+      content: '检测到 78% 的请求共享相同 System Prompt 前缀（平均 1,200 tokens），但当前未启用 Prefix Caching，每次请求都需重新计算 Prefill。启用后预计 TTFT 可从 523.6ms 降至 80-120ms（降幅约 80%），显存占用可减少约 15%。配置方法：enable_prefix_caching=true。',
     },
     {
-      title: '优化批处理调度策略',
-      content: '当前 max_batch_size=32，但监测到高峰期平均排队等待时间为 450ms。建议将 max_batch_size 提升至 64 并启用 continuous batching，预计可将 P90 端到端延迟从 3.8s 降至 2.5s，吞吐量提升约 30%。',
+      title: '强烈建议：INT8/AWQ 量化降低解码延迟',
+      content: '当前使用 FP16 推理，单卡 GPU 显存利用率达 92%，TPS 仅 14.8 tokens/s，TPOT 高达 67.5ms。建议部署 INT8 或 AWQ 量化版本，实测 perplexity 增幅 <0.5%，但可将显存占用降低约 45%，TPS 预计提升 3-5 倍至 50-80 tokens/s。',
     },
     {
-      title: '调整量化精度',
-      content: '当前模型使用 FP16 推理，GPU 显存利用率达 92%。建议尝试 INT8/AWQ 量化，在保持输出质量（perplexity 增幅 < 0.5%）的前提下，可将显存占用降低约 45%，TPS 提升 20-35%。',
+      title: '强烈建议：增加 Tensor Parallelism 至 TP=2',
+      content: '当前 TP=1 单卡推理，解码阶段 TPOT P99 达 208.7ms，成为端到端延迟的主要瓶颈。若有多 GPU 资源，将 tensor_parallel_size 提升至 2 可将计算并行度翻倍，TPOT 预计降低 40-50%，E2E P99 从 28.4s 降至 12-15s。',
     },
     {
-      title: '增加 Tensor Parallelism',
-      content: '检测到单次推理的 TPOT P99 为 85ms，解码阶段成为瓶颈。如有多 GPU 资源，建议将 tensor_parallel_size 从 1 提升至 2，预计可将 TPOT 降低 35-40%，显著改善长文本生成场景的用户体验。',
+      title: '建议：启用 Continuous Batching 替代 Static Batching',
+      content: '当前使用 static batching（max_batch_size=32），高峰期排队等待时间平均 680ms，P90 排队时间达 1.5s。切换至 continuous batching 后，请求可在前一批次解码过程中动态加入，预计队列等待时间降至 50ms 以下，整体吞吐量提升 40-60%。',
     },
   ]
 }
 
 function buildCompareResult() {
-  const n = 30
-  const baselineTTFT = Array.from({ length: n }, () => rand(150, 350))
-  const optimizedTTFT = Array.from({ length: n }, () => rand(80, 220))
-  const baselineDecode = Array.from({ length: n }, () => rand(30, 60))
-  const optimizedDecode = Array.from({ length: n }, () => rand(45, 85))
+  const n = 50
+  // Baseline: high TTFT, slow decode speed
+  const baselineTTFT = Array.from({ length: n }, () => rand(380, 720))
+  const optimizedTTFT = Array.from({ length: n }, () => rand(55, 145))
+  const baselineDecode = Array.from({ length: n }, () => rand(10, 22))
+  const optimizedDecode = Array.from({ length: n }, () => rand(55, 105))
 
   return {
-    ttft_reduction: rand(0.2, 0.45),
-    tps_increase: rand(0.15, 0.4),
-    tpot_reduction: rand(0.1, 0.35),
-    e2e_reduction: rand(0.15, 0.38),
+    ttft_reduction: 0.824,     // 82.4% reduction (523→92)
+    tps_increase: 4.277,       // +427.7% increase (14.8→78.1, i.e. 5.3x)
+    tpot_reduction: 0.810,     // 81.0% reduction (67.5→12.8)
+    e2e_reduction: 0.828,      // 82.8% reduction (9180→1580)
     baseline_ttft: baselineTTFT,
     optimized_ttft: optimizedTTFT,
     baseline_decode_speed: baselineDecode,
@@ -136,25 +188,47 @@ function buildCompareResult() {
   }
 }
 
-function buildPerformanceData(page: number, size: number) {
-  const total = 256
-  const items = Array.from({ length: Math.min(size, total - (page - 1) * size) }, (_, i) => ({
-    id: (page - 1) * size + i + 1,
-    model: 'gpt-4o-2026-01-01',
-    prompt_tokens: randInt(100, 8000),
-    cached_tokens: randInt(0, 4000),
-    completion_tokens: randInt(50, 2000),
-    ttft_ms: rand(80, 500),
-    tpot_ms: rand(10, 60),
-    tps: rand(20, 90),
-    e2e_latency_ms: rand(500, 5000),
-    arrival_time: `2026-02-01 ${String(randInt(8, 22)).padStart(2, '0')}:${String(randInt(0, 59)).padStart(2, '0')}:${String(randInt(0, 59)).padStart(2, '0')}`,
-  }))
+function buildPerformanceData(page: number, size: number, taskId: string) {
+  const total = 500
+  const optimized = isOptimizedTask(taskId)
+  const count = Math.min(size, total - (page - 1) * size)
+  if (count <= 0) return { items: [], total }
+
+  const items = Array.from({ length: count }, (_, i) => {
+    const promptTokens = randInt(200, 8000)
+    if (optimized) {
+      const cachedTokens = Math.round(promptTokens * rand(0.55, 0.85))
+      return {
+        id: (page - 1) * size + i + 1,
+        model: 'gpt-4o-2026-01-01',
+        prompt_tokens: promptTokens,
+        cached_tokens: cachedTokens,
+        completion_tokens: randInt(80, 1500),
+        ttft_ms: rand(52, 168),
+        tpot_ms: rand(8, 28),
+        tps: rand(42, 110),
+        e2e_latency_ms: rand(650, 3200),
+        arrival_time: `2026-02-10 ${String(randInt(8, 22)).padStart(2, '0')}:${String(randInt(0, 59)).padStart(2, '0')}:${String(randInt(0, 59)).padStart(2, '0')}`,
+      }
+    }
+    return {
+      id: (page - 1) * size + i + 1,
+      model: 'gpt-4o-2026-01-01',
+      prompt_tokens: promptTokens,
+      cached_tokens: randInt(0, 50),
+      completion_tokens: randInt(80, 1500),
+      ttft_ms: rand(280, 1200),
+      tpot_ms: rand(38, 145),
+      tps: rand(6, 26),
+      e2e_latency_ms: rand(4500, 22000),
+      arrival_time: `2026-02-01 ${String(randInt(8, 22)).padStart(2, '0')}:${String(randInt(0, 59)).padStart(2, '0')}:${String(randInt(0, 59)).padStart(2, '0')}`,
+    }
+  })
   return { items, total }
 }
 
 function buildQAData(page: number, size: number) {
-  const total = 256
+  const total = 500
   const sampleQuestions = [
     '请解释量子计算的基本原理',
     '如何优化 Python 代码的性能？',
@@ -236,10 +310,10 @@ const routes: MockRoute[] = [
   {
     method: 'get',
     pattern: /\/api\/files\/([^/]+)\/performance$/,
-    handler: (_m, config) => {
+    handler: (m, config) => {
       const page = Number(config.params?.page) || 1
       const size = Number(config.params?.size) || 20
-      return buildPerformanceData(page, size)
+      return buildPerformanceData(page, size, m[1])
     },
   },
   {
@@ -254,18 +328,18 @@ const routes: MockRoute[] = [
   {
     method: 'get',
     pattern: /\/api\/files\/([^/]+)\/summary$/,
-    handler: () => ({ total_records: 256, model: 'gpt-4o', duration_seconds: 1820 }),
+    handler: () => ({ total_records: 500, model: 'gpt-4o', duration_seconds: 1820 }),
   },
   // Metrics
   {
     method: 'get',
     pattern: /\/api\/metrics\/([^/]+)\/summary$/,
-    handler: () => ({ data: buildMetricsSummary() }),
+    handler: (m) => ({ data: buildMetricsSummary(m[1]) }),
   },
   {
     method: 'get',
     pattern: /\/api\/metrics\/([^/]+)\/distributions$/,
-    handler: () => ({ data: buildDistributions() }),
+    handler: (m) => ({ data: buildDistributions(m[1]) }),
   },
   // Benchmark
   {
@@ -299,7 +373,7 @@ const routes: MockRoute[] = [
   {
     method: 'get',
     pattern: /\/api\/analysis\/([^/]+)\/suggestions$/,
-    handler: () => ({ data: buildSuggestions() }),
+    handler: (m) => ({ data: buildSuggestions(m[1]) }),
   },
 ]
 
